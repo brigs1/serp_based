@@ -1,0 +1,662 @@
+/* static/css/style.css */
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #1d4ed8;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+ }
+ 
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+ }
+ 
+ body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+ }
+ 
+ .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+ }
+ 
+ /* Header Styles */
+ .results-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+ }
+ 
+ .results-header h1 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+ }
+ 
+ .search-stats {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+ }
+ 
+ .query-text {
+    font-weight: 500;
+    color: var(--text-primary);
+ }
+ 
+ .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 1rem;
+ }
+ 
+ /* Paper Card Styles */
+ .papers-grid {
+    display: grid;
+    gap: 2rem;
+ }
+ 
+ .paper-card {
+    background: var(--card-background);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+ }
+ 
+ .paper-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .paper-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+ }
+ 
+ .paper-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+ }
+ 
+ .citation-count {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+ }
+ 
+ .paper-meta {
+    margin-bottom: 1rem;
+ }
+ 
+ .authors {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+ }
+ 
+ .journal {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-style: italic;
+ }
+ 
+ .paper-abstract {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--background-color);
+    border-radius: 0.5rem;
+ }
+ 
+ .paper-abstract h3 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+ }
+ 
+ .paper-abstract p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+ }
+ 
+ .paper-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+ }
+ 
+ .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+ }
+ 
+ .link-btn.pdf {
+    background-color: #ef4444;
+    color: white;
+ }
+ 
+ .link-btn.doi {
+    background-color: #10b981;
+    color: white;
+ }
+ 
+ .link-btn.citations {
+    background-color: #8b5cf6;
+    color: white;
+ }
+ 
+ .link-btn:hover {
+    opacity: 0.9;
+ }
+ 
+ /* No Results Styles */
+ .no-results {
+    text-align: center;
+    padding: 3rem;
+    background: var(--card-background);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .no-results h2 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+ }
+ 
+ .no-results p {
+    color: var(--text-secondary);
+ }
+ 
+ /* Responsive Design */
+ @media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .paper-header {
+        flex-direction: column;
+    }
+    
+    .citation-count {
+        align-self: flex-start;
+    }
+    
+    .paper-links {
+        flex-direction: column;
+    }
+    
+    .link-btn {
+        width: 100%;
+        justify-content: center;
+    }
+ }
+
+ /* Search Section Styles - 여기서부터 추가 */
+.search-section {
+    text-align: center;
+    margin-bottom: 4rem;
+    padding: 3rem 0;
+}
+
+.site-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.site-description {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+}
+
+.search-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.search-box {
+    background: var(--card-background);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--background-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.search-icon {
+    color: var(--text-secondary);
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    padding: 0.5rem;
+    outline: none;
+    color: var(--text-primary);
+}
+
+.search-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.add-keyword-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.add-keyword-btn:hover {
+    background: rgba(37, 99, 235, 0.1);
+}
+
+.search-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.option-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.checkbox-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.sort-select {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.search-button {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-button:hover {
+    background: var(--secondary-color);
+}
+
+/* Feature Cards */
+.features-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 2rem;
+    background: var(--card-background);
+    border-radius: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.link-btn.network {
+   background-color: #6366f1;
+   color: white;
+   display: inline-flex;
+   align-items: center;
+   gap: 0.5rem;
+   transition: background-color 0.2s;
+}
+
+.link-btn.network:hover {
+   background-color: #4f46e5;
+}
+
+/* Citation Network Container Styles */
+.citation-network-container {
+   margin: 2rem 0;
+}
+
+.citation-network-container .paper-header {
+   margin-bottom: 1.5rem;
+}
+
+#citation-network {
+   background: var(--background-color);
+   border-radius: 0.5rem;
+   overflow: hidden;
+}
+
+/* Update existing paper-card for network container */
+.paper-card.citation-network-container {
+   padding: 1.5rem;
+   margin-bottom: 2rem;
+}
+
+/* Responsive adjustments for network visualization */
+@media (max-width: 768px) {
+   #citation-network {
+       height: 500px !important;  /* Smaller height on mobile */
+   }
+   
+   .citation-network-container {
+       margin: 1rem 0;
+   }
+}
+.option-group {
+   margin: 1rem 0;
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+}
+
+.page-input {
+   width: 60px;
+   padding: 0.5rem;
+   border: 1px solid var(--border-color);
+   border-radius: 0.25rem;
+}
+
+.option-help {
+   color: var(--text-secondary);
+   font-size: 0.9rem;
+}
+/* 기존 CSS에 추가/수정할 스타일 */
+.papers-grid.compact {
+   display: grid;
+   gap: 1rem;
+}
+
+.paper-card {
+   background: var(--card-background);
+   border: 1px solid var(--border-color);
+   border-radius: 0.5rem;
+   padding: 1rem;
+   transition: box-shadow 0.2s;
+}
+
+.paper-card:hover {
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.paper-header {
+   margin-bottom: 0.75rem;
+}
+
+.paper-title {
+   font-size: 1.1rem;
+   font-weight: 600;
+   color: var(--primary-color);
+   margin: 0;
+}
+
+.citation-count {
+   background: var(--background-color);
+   color: var(--primary-color);
+   padding: 0.25rem 0.5rem;
+   border-radius: 0.25rem;
+   font-size: 0.85rem;
+   display: inline-flex;
+   align-items: center;
+   gap: 0.25rem;
+}
+
+.paper-meta {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+   margin-bottom: 0.75rem;
+}
+
+.authors {
+   font-size: 0.9rem;
+   color: var(--text-secondary);
+}
+
+.year-tag {
+   background: var(--background-color);
+   padding: 0.2rem 0.5rem;
+   border-radius: 0.25rem;
+   font-size: 0.85rem;
+   color: var(--text-secondary);
+}
+
+.paper-abstract {
+   position: relative;
+   margin: 0.75rem 0;
+}
+
+.abstract-content {
+   font-size: 0.9rem;
+   line-height: 1.5;
+   color: var(--text-secondary);
+}
+
+.abstract-content.truncated {
+   max-height: 100px;
+   overflow: hidden;
+}
+
+.show-more {
+   display: none;
+   background: none;
+   border: none;
+   color: var(--primary-color);
+   font-size: 0.85rem;
+   padding: 0.25rem 0;
+   cursor: pointer;
+   margin-top: 0.5rem;
+}
+
+.show-more:hover {
+   text-decoration: underline;
+}
+
+.page-info {
+   color: var(--text-secondary);
+   font-size: 0.9rem;
+   margin-left: 0.5rem;
+}
+
+/* 반응형 디자인 개선 */
+@media (min-width: 768px) {
+   .papers-grid.compact {
+       grid-template-columns: 1fr;
+   }
+   
+   .paper-card {
+       display: grid;
+       grid-template-columns: 1fr auto;
+       gap: 1rem;
+   }
+   
+   .paper-content {
+       flex: 1;
+   }
+   
+   .paper-meta {
+       justify-content: flex-start;
+   }
+}
+
+@media (max-width: 767px) {
+   .paper-header {
+       flex-direction: column;
+       gap: 0.5rem;
+   }
+   
+   .citation-count {
+       align-self: flex-start;
+   }
+}
+
+/* Citation Network Styles */
+.network-container {
+   display: flex;
+   gap: 20px;
+   height: 95vh;
+   padding: 20px;
+   background-color: var(--background-color);
+}
+
+.visualization-panel {
+   flex: 2;
+   background: var(--card-background);
+   border-radius: 0.75rem;
+   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+   padding: 20px;
+}
+
+.info-panel {
+   flex: 1;
+   min-width: 300px;
+   max-width: 400px;
+   background: var(--card-background);
+   border-radius: 0.75rem;
+   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+   padding: 20px;
+   overflow-y: auto;
+}
+
+.info-panel .paper-title {
+   font-size: 1.2em;
+   color: var(--primary-color);
+   margin-bottom: 10px;
+   font-weight: 600;
+}
+
+.info-panel .paper-meta {
+   color: var(--text-secondary);
+   font-size: 0.9em;
+   margin-bottom: 15px;
+}
+
+.info-panel .paper-abstract {
+   color: var(--text-primary);
+   line-height: 1.6;
+   font-size: 0.95em;
+}
+
+.network-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 20px;
+   padding-bottom: 10px;
+   border-bottom: 1px solid var(--border-color);
+}
+
+.network-title {
+   font-size: 1.5em;
+   color: var(--text-primary);
+   margin: 0;
+}
+
+.legend {
+   margin-top: 20px;
+   padding: 15px;
+   background: var(--background-color);
+   border-radius: 0.5rem;
+   font-size: 0.9em;
+}
+
+.legend-item {
+   display: flex;
+   align-items: center;
+   margin: 8px 0;
+   color: var(--text-secondary);
+}
+
+.legend-color {
+   width: 12px;
+   height: 12px;
+   border-radius: 50%;
+   margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+   .network-container {
+       flex-direction: column;
+       height: auto;
+   }
+
+   .info-panel {
+       max-width: none;
+   }
+}

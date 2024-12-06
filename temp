@@ -1,0 +1,175 @@
+# def search():
+#     try:
+#         keywords = request.form.getlist('keywords')
+#         if not keywords:
+#             return render_template('results.html', 
+#                                 success=False, 
+#                                 error='No keywords provided')
+        
+#         searcher = ScholarSearcher()
+#         if not searcher.api_key:
+#             raise ValueError("SERPAPI_KEY is not configured")
+            
+#         # 검색 결과 가져오기 (최대 200개로 제한)
+#         search_results = searcher.search_papers(keywords, num_results=1000)
+        
+#         if 'error' in search_results:
+#             return render_template('results.html',
+#                                 success=False,
+#                                 error=search_results.get('error'),
+#                                 original_keywords=keywords)
+        
+#         papers = search_results.get('papers', [])
+#         total_found = search_results.get('total_found', 0)
+        
+#         if not papers:
+#             return render_template('results.html',
+#                                 success=False,
+#                                 error='No papers found for the given keywords',
+#                                 original_keywords=keywords)
+        
+#         # 인용이 있는 논문만 필터링
+#         cited_papers = [paper for paper in papers if paper.get('citations', 0) > 0]
+#         papers_dict = {paper['title']: paper for paper in cited_papers}
+        
+#         # 각 논문의 인용 관계 수집
+#         for paper in cited_papers:
+#             citation_network = searcher.get_citation_network(paper['title'], paper['authors'])
+#             if citation_network:
+#                 paper['citing_papers'] = [
+#                     p for p in citation_network.get('citing_papers', [])
+#                     if p['title'] in papers_dict  # 검색 결과 내의 논문만 포함
+#                 ]
+#             else:
+#                 paper['citing_papers'] = []
+        
+#         # 시각화 데이터 생성
+#         if cited_papers:
+#             # 최대 인용 수 계산
+#             max_citations = max(paper.get('citations', 0) for paper in cited_papers)
+            
+#             # 시간 범위 계산
+#             years = [int(paper.get('year', datetime.now().year)) for paper in cited_papers]
+#             min_year = min(years) if years else datetime.now().year - 5
+#             max_year = max(years) if years else datetime.now().year
+            
+#             trace_data = []
+            
+#             # 엣지 먼저 그리기 (노드 아래에 표시되도록)
+#             for paper in cited_papers:
+#                 paper_year = int(paper.get('year', datetime.now().year))
+#                 paper_idx = cited_papers.index(paper)
+                
+#                 for citing_paper in paper['citing_papers']:
+#                     cited_idx = next((i for i, p in enumerate(cited_papers) 
+#                                    if p['title'] == citing_paper['title']), None)
+#                     if cited_idx is not None:
+#                         cited_year = int(cited_papers[cited_idx].get('year', datetime.now().year))
+                        
+#                         # 엣지 추가
+#                         trace_data.append({
+#                             'x': [paper_year, cited_year],
+#                             'y': [paper_idx, cited_idx],
+#                             'mode': 'lines',
+#                             'line': {
+#                                 'color': 'rgba(150,150,150,0.3)',
+#                                 'width': 1
+#                             },
+#                             'showlegend': False,
+#                             'hoverinfo': 'text',
+#                             'text': f"{citing_paper['title']} cites {paper['title']}"
+#                         })
+            
+#             # 논문 노드 생성
+#             for i, paper in enumerate(cited_papers):
+#                 year = int(paper.get('year', datetime.now().year))
+#                 citations = paper.get('citations', 0)
+                
+#                 # 크기 계산 (5mm ~ 8mm)
+#                 base_size = 5
+#                 size_increase = 3 * (citations / max_citations) if max_citations > 0 else 0
+#                 node_size = base_size + size_increase
+                
+#                 # 인용 관계 여부에 따른 색상 설정
+#                 has_citation_relation = len(paper.get('citing_papers', [])) > 0
+#                 node_color = f'rgb(65, 105, 225)' if has_citation_relation else f'rgb(169, 169, 169)'
+                
+#                 trace_data.append({
+#                     'x': [year],
+#                     'y': [i],
+#                     'mode': 'markers+text',
+#                     'name': paper['title'][:50] + '...',
+#                     'marker': {
+#                         'size': node_size * 4,
+#                         'color': node_color,
+#                         'symbol': 'circle',
+#                         'line': {'width': 1, 'color': 'white'}
+#                     },
+#                     'text': [f"{citations} citations"],
+#                     'textposition': 'middle right',
+#                     'hovertext': [
+#                         f"Title: {paper['title']}<br>" +
+#                         f"Authors: {paper['authors']}<br>" +
+#                         f"Citations: {citations}<br>" +
+#                         f"Year: {year}<br>" +
+#                         f"Citation Relations: {len(paper.get('citing_papers', []))}"
+#                     ],
+#                     'hoverinfo': 'text'
+#                 })
+            
+#             # Plotly 레이아웃
+#             layout = {
+#                 'title': {
+#                     'text': 'Citation Network Timeline<br>' +
+#                            f'<span style="font-size:12px">Showing {len(cited_papers)} papers with citations ' +
+#                            f'from {total_found} total results</span>',
+#                     'y': 0.95,
+#                     'x': 0.5,
+#                     'xanchor': 'center',
+#                     'yanchor': 'top'
+#                 },
+#                 'showlegend': False,
+#                 'hovermode': 'closest',
+#                 'xaxis': {
+#                     'title': 'Year',
+#                     'range': [min_year-1, max_year+1],
+#                     'tickmode': 'linear',
+#                     'dtick': 1
+#                 },
+#                 'yaxis': {
+#                     'showticklabels': False,
+#                     'zeroline': False,
+#                     'range': [-1, len(cited_papers)]
+#                 },
+#                 'height': max(600, len(cited_papers) * 40),
+#                 'margin': {'l': 50, 'r': 150, 't': 100, 'b': 50},
+#                 'plot_bgcolor': 'white',
+#                 'paper_bgcolor': 'white',
+#                 'annotations': [{
+#                     'x': max_year + 0.5,
+#                     'y': i,
+#                     'xanchor': 'left',
+#                     'text': paper['title'][:50] + '...',
+#                     'font': {'size': 10},
+#                     'showarrow': False
+#                 } for i, paper in enumerate(cited_papers)]
+#             }
+            
+#             # Plotly 그래프 JSON 생성
+#             graph_data = {'data': trace_data, 'layout': layout}
+#             search_results['graphJSON'] = json.dumps(graph_data, cls=plotly.utils.PlotlyJSONEncoder)
+        
+#         search_results['papers'] = papers
+#         search_results['cited_papers_count'] = len(cited_papers)
+#         search_results['total_found'] = total_found
+        
+#         return render_template('results.html', **search_results)
+        
+#     except Exception as e:
+#         import traceback
+#         print(f"Error during search: {str(e)}")
+#         print(f"Traceback: {traceback.format_exc()}")
+#         return render_template('results.html', 
+#                              success=False, 
+#                              error=str(e),
+#                              original_keywords=keywords)

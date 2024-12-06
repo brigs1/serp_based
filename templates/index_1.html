@@ -1,0 +1,84 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholar Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="site-header">
+            <nav class="top-nav">
+                <div class="nav-links">
+                    <a href="#" class="nav-link active">Home</a>
+                    <a href="#" class="nav-link">About</a>
+                    <a href="#" class="nav-link">Help</a>
+                </div>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="search-section">
+                <h1 class="site-title">Scholar Search</h1>
+                <p class="site-description">Advanced academic literature search powered by AI</p>
+
+                <form action="{{ url_for('main.search') }}" method="POST" class="search-form">
+                    <div class="search-container">
+                        <div class="search-box">
+                            <div class="search-input-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" 
+                                       name="keywords" 
+                                       placeholder="Enter search terms (e.g., SNAP-25, protein)"
+                                       class="search-input"
+                                       required>
+                                <button type="button" class="add-keyword-btn">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="search-options">
+                                <label class="option-checkbox">
+                                    <input type="checkbox" name="use_synonyms" value="true" checked>
+                                    <span class="checkbox-text">Include synonyms</span>
+                                </label>
+                                <div class="sort-option">
+                                    <select name="sort_by" class="sort-select">
+                                        <option value="citations">Sort by Citations</option>
+                                        <option value="date">Sort by Date</option>
+                                        <option value="relevance">Sort by Relevance</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="search-button">
+                            Search Papers
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="features-section">
+                <div class="feature-card">
+                    <i class="fas fa-brain feature-icon"></i>
+                    <h3>AI-Powered Search</h3>
+                    <p>Advanced algorithms to find the most relevant papers</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-project-diagram feature-icon"></i>
+                    <h3>Citation Network</h3>
+                    <p>Explore paper relationships and references</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-clock feature-icon"></i>
+                    <h3>Real-time Updates</h3>
+                    <p>Latest research papers and citations</p>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

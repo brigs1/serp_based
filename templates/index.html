@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scholar Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <section class="search-section">
+            <h1 class="site-title">Scholar Search</h1>
+            <p class="site-description">Advanced academic literature search powered by AI</p>
+            
+            <div class="search-container">
+                <form action="{{ url_for('main.search') }}" method="post" class="search-box">
+                    <div class="search-input-wrapper">
+                        <input type="text" name="keywords" class="search-input" placeholder="Enter keywords..." required>
+                        <button type="button" class="add-keyword-btn">+ Add</button>
+                    </div>
+                    
+                    <div class="search-options">
+                        <div class="option-group">
+                            <label class="option-label">Pages to fetch (1-20):</label>
+                            <input type="number" name="num_pages" min="1" max="20" value="1" class="page-input">
+                            <span class="option-help">Each page contains ~10 papers</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="search-button">Search Papers</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.querySelector('.add-keyword-btn').addEventListener('click', function() {
+            const wrapper = document.querySelector('.search-input-wrapper');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = 'keywords';
+            input.className = 'search-input';
+            input.placeholder = 'Additional keyword...';
+            wrapper.appendChild(input);
+        });
+    </script>
+</body>
+</html>

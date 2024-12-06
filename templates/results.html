@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% if success %}
+    <div class="container">
+        <div class="results-header">
+            <div class="header-main">
+                <h1>Search Results</h1>
+                <div class="search-stats">
+                    Found <span class="query-text">{{ total_found }}</span> papers matching query: 
+                    <span class="query-text">"{{ query }}"</span>
+                    <span class="page-info">(Showing {{ count }} results)</span>
+                </div>
+            </div>
+            <a href="{{ url_for('main.index') }}" class="back-link">← Back to Search</a>
+        </div>
+
+        <div class="papers-grid">
+            {% for paper in papers %}
+            <article class="paper-card">
+                <div class="paper-content">
+                    <div class="paper-header">
+                        <div class="title-row">
+                            <h2 class="paper-title">{{ paper.title }}</h2>
+                            <div class="paper-metrics">
+                                <div class="citation-count" title="Times cited">
+                                    {{ paper.citations }} citations
+                                </div>
+                                <div class="year-tag">{{ paper.year }}</div>
+                            </div>
+                        </div>
+                        <div class="authors" title="Authors">{{ paper.authors }}</div>
+                    </div>
+
+                    <div class="paper-body">
+                        <div class="paper-abstract">
+                            <div class="abstract-content truncated">{{ paper.abstract }}</div>
+                            <button class="toggle-abstract" aria-label="Toggle abstract">
+                                <span class="show-text">Show more</span>
+                                <span class="hide-text">Show less</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="paper-actions">
+                        {% if paper.citations and paper.citations > 0 and paper.citation_id %}
+                        <a href="{{ url_for('main.citation_network', 
+                                            citation_id=paper.citation_id,
+                                            title=paper.title,
+                                            authors=paper.authors,
+                                            year=paper.year,
+                                            citations=paper.citations,
+                                            abstract=paper.abstract) }}" 
+                           class="action-btn network" 
+                           title="View citation network for {{ paper.title }}">
+                            View Citation Network ({{ paper.citations }})
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        {% if total_found > count %}
+        <div class="pagination">
+            {% if current_page > 1 %}
+            <button onclick="changePage({{ current_page - 1 }})" class="page-btn prev">Previous</button>
+            {% endif %}
+            
+            <span class="page-info">
+                Page {{ current_page }} of {{ (total_found // 10) + 1 }}
+            </span>
+            
+            {% if current_page < (total_found // 10) + 1 %}
+            <button onclick="changePage({{ current_page + 1 }})" class="page-btn next">Next</button>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Abstract 토글 기능
+        document.querySelectorAll('.paper-abstract').forEach(abstract => {
+            const content = abstract.querySelector('.abstract-content');
+            const button = abstract.querySelector('.toggle-abstract');
+            
+            if (content.scrollHeight <= 100) {
+                button.style.display = 'none';
+                content.classList.remove('truncated');
+                return;
+            }
+
+            button.addEventListener('click', () => {
+                content.classList.toggle('truncated');
+                button.classList.toggle('expanded');
+                button.querySelector('.show-text').style.display = 
+                    content.classList.contains('truncated') ? 'inline' : 'none';
+                button.querySelector('.hide-text').style.display = 
+                    content.classList.contains('truncated') ? 'none' : 'inline';
+            });
+        });
+    });
+
+    function changePage(page) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("main.search") }}';
+        
+        const inputs = {
+            'keywords': '{{ query }}',
+            'page': page
+        };
+
+        Object.entries(inputs).forEach(([name, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+    </script>
+    {% else %}
+    <div class="container">
+        <div class="no-results">
+            <h2>Error</h2>
+            <p>{{ error }}</p>
+            {% if original_keywords %}
+            <p class="original-query">Original query: "{{ original_keywords|join(', ') }}"</p>
+            {% endif %}
+            <a href="{{ url_for('main.index') }}" class="back-link">← Try Another Search</a>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>

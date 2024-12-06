@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citation Network - {{ paper_info.title }}</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="network-container">
+        <div class="visualization-panel">
+            <div class="network-header">
+                <h1 class="network-title">Citation Network</h1>
+                <a href="{{ url_for('main.search') }}" class="back-link">← Back to Results</a>
+            </div>
+            <div id="networkVisualization"></div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #2563eb;"></div>
+                    <span>Target Paper</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #82C91E;"></div>
+                    <span>Citing Papers</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF6B6B;"></div>
+                    <span>Cited Papers</span>
+                </div>
+            </div>
+        </div>
+        <div id="infoPanel" class="info-panel">
+            <div class="paper-title">Hover over a node to see paper details</div>
+            <div class="paper-meta"></div>
+            <div class="paper-abstract"></div>
+        </div>
+    </div>
+    <div class="analysis-panel">
+        <h2>Citation Analysis</h2>
+        
+        <div class="topic-analysis">
+            <h3>Main Research Topics</h3>
+            {% for topic in analysis.topic_analysis %}
+            <div class="topic-card">
+                <h4>Topic {{ topic.id }}</h4>
+                <div class="keyword-cloud">
+                    {% for keyword in topic.keywords %}
+                    <span class="keyword">{{ keyword }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    
+        <div class="year-trends">
+            <h3>Research Trends by Year</h3>
+            <div class="trend-timeline">
+                {% for trend in analysis.year_trends %}
+                <div class="year-card">
+                    <h4>{{ trend.year }}</h4>
+                    <div class="trend-stats">
+                        <p>Papers: {{ trend.paper_count }}</p>
+                        <p>Avg. Citations: {{ "%.1f"|format(trend.avg_citations) }}</p>
+                    </div>
+                    <div class="year-keywords">
+                        {% for keyword in trend.keywords %}
+                        <span class="keyword">{{ keyword }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    
+        <div class="influence-analysis">
+            <h3>Citation Influence</h3>
+            <div class="influence-stats">
+                <p>Total Citations: {{ analysis.citation_influence.total_citations }}</p>
+                <p>Average Citations: {{ "%.1f"|format(analysis.citation_influence.average_citations) }}</p>
+            </div>
+            <div class="highly-cited">
+                <h4>Highly Cited Papers</h4>
+                {% for paper in analysis.citation_influence.highly_cited %}
+                <div class="paper-card">
+                    <h5>{{ paper.title }}</h5>
+                    <p>Citations: {{ paper.citations }}</p>
+                    <p class="paper-authors">{{ paper.authors }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paperInfo = {{ paper_info|tojson|safe }};
+            const networkData = {{ network_data|tojson|safe }};
+
+            // 노드 데이터 준비
+            const traces = [];
+
+            // 타겟 논문 노드
+            traces.push({
+                x: [paperInfo.year],
+                y: [0],
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                    size: 20,
+                    color: '#2563eb'
+                },
+                name: 'Target Paper',
+                hoverinfo: 'none',
+                customdata: [{
+                    title: paperInfo.title,
+                    authors: paperInfo.authors,
+                    year: paperInfo.year,
+                    citations: paperInfo.citations,
+                    abstract: paperInfo.abstract,
+                    type: 'target'
+                }]
+            });
+
+            // 인용하는 논문 노드
+            const citingPapers = networkData.citing_papers || [];
+            if (citingPapers.length > 0) {
+                traces.push({
+                    x: citingPapers.map(p => p.year),
+                    y: Array(citingPapers.length).fill(1),
+                    mode: 'markers',
+                    type: 'scatter',
+                    marker: {
+                        size: 15,
+                        color: '#82C91E'
+                    },
+                    name: 'Citing Papers',
+                    hoverinfo: 'none',
+                    customdata: citingPapers
+                });
+            }
+
+            // 인용된 논문 노드
+            const citedPapers = networkData.cited_papers || [];
+            if (citedPapers.length > 0) {
+                traces.push({
+                    x: citedPapers.map(p => p.year),
+                    y: Array(citedPapers.length).fill(-1),
+                    mode: 'markers',
+                    type: 'scatter',
+                    marker: {
+                        size: 15,
+                        color: '#FF6B6B'
+                    },
+                    name: 'Cited Papers',
+                    hoverinfo: 'none',
+                    customdata: citedPapers
+                });
+            }
+
+            // 레이아웃 설정
+            const layout = {
+                showlegend: true,
+                hovermode: 'closest',
+                xaxis: {
+                    title: 'Year',
+                    showgrid: true
+                },
+                yaxis: {
+                    title: 'Citation Direction',
+                    showgrid: true,
+                    ticktext: ['Cited Papers', 'Target Paper', 'Citing Papers'],
+                    tickvals: [-1, 0, 1],
+                    range: [-1.5, 1.5]
+                },
+                margin: { t: 50, r: 50, b: 50, l: 50 }
+            };
+
+            // 그래프 생성
+            Plotly.newPlot('networkVisualization', traces, layout);
+
+            // 호버 이벤트 처리
+            const networkDiv = document.getElementById('networkVisualization');
+            networkDiv.on('plotly_hover', function(data) {
+                const infoPanel = document.getElementById('infoPanel');
+                const point = data.points[0];
+                const paperData = point.customdata;
+                
+                if (paperData) {
+                    infoPanel.querySelector('.paper-title').textContent = paperData.title;
+                    infoPanel.querySelector('.paper-meta').innerHTML = `
+                        <div>Authors: ${paperData.authors}</div>
+                        <div>Year: ${paperData.year}</div>
+                        <div>Citations: ${paperData.citations}</div>
+                    `;
+                    infoPanel.querySelector('.paper-abstract').textContent = 
+                        paperData.abstract || 'No abstract available';
+                }
+            });
+
+            // 호버 아웃 이벤트 처리
+            networkDiv.on('plotly_unhover', function(data) {
+                const infoPanel = document.getElementById('infoPanel');
+                infoPanel.querySelector('.paper-title').textContent = 'Hover over a node to see paper details';
+                infoPanel.querySelector('.paper-meta').innerHTML = '';
+                infoPanel.querySelector('.paper-abstract').textContent = '';
+            });
+        });
+    </script>
+</body>
+</html>
